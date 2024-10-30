@@ -6,8 +6,10 @@ import { Link } from "lucide-react";
 export function ArticleSection() {
   const [tripTravel, setTripTravel] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  const [loading, setLoading] = useState(false);
   const textMax = 100;
   const fetchTrip = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(
         `http://localhost:4001/trips?keywords=${inputValue}`
@@ -17,6 +19,7 @@ export function ArticleSection() {
     } catch (error) {
       console.log(error);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -28,10 +31,14 @@ export function ArticleSection() {
       fetchTrip();
     }
   }, [inputValue]);
-
   return (
     <>
       <NavBar inputSearch={inputValue} setInputSearch={setInputValue} />
+      {loading ? (
+        <div>
+          <h1>555</h1>
+        </div>
+      ) : null}
       <article>
         {tripTravel.map((trip, index) => (
           <div className="flex justify-between w-full h-64 mt-8" key={index}>
@@ -42,9 +49,14 @@ export function ArticleSection() {
             />
             <div className="w-2/3 h-full">
               <div className="w-full h-1/2 px-8 pt-2">
-                <h1 className="text-2xl font-bold text-gray-800">
+                <a
+                  className="text-2xl font-bold text-gray-800"
+                  href={trip.url}
+                  target="_blank"
+                  rel=""
+                >
                   {trip.title}
-                </h1>
+                </a>
                 <p className="pt-1 font-normal text-gray-600">
                   {trip.description.length > textMax
                     ? `${trip.description.slice(0, textMax)}...`
@@ -80,7 +92,18 @@ export function ArticleSection() {
                 </div>
                 <div className="pr-20 pt-24">
                   <div className="size-9 flex justify-center items-center text-sky-400 border-sky-400 border-2 border-solid rounded-full">
-                    <Link />
+                    <button
+                      onClick={() => {
+                        if (trip.url.length > 0) {
+                          navigator.clipboard.writeText(trip.url);
+                          alert("คัดลอก URL สำเร็จ");
+                        } else {
+                          alert("คัดลอก URL ผิดพลาด");
+                        }
+                      }}
+                    >
+                      <Link />
+                    </button>
                   </div>
                 </div>
               </div>
