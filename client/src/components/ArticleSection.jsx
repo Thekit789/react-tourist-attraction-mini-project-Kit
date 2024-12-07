@@ -1,13 +1,21 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { NavBar } from "./Navbar";
 import { Link } from "lucide-react";
+import React from "react";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export function ArticleSection() {
   const [tripTravel, setTripTravel] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
+
   const textMax = 100;
+
+  const handleChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
   const fetchTrip = async () => {
     setLoading(true);
     try {
@@ -33,12 +41,29 @@ export function ArticleSection() {
   }, [inputValue]);
   return (
     <>
-      <NavBar inputSearch={inputValue} setInputSearch={setInputValue} />
-      {loading ? (
+      <ToastContainer />
+      <header className="w-full flex py-10 justify-center">
+        <h1 className="text-5xl font-semibold text-cyan-500">เที่ยวไหนดี</h1>
+      </header>
+      <nav className="flex flex-col items-center">
+        <h1 className="w-5/6 flex justify-start text-lg font-medium">
+          ค้นหาที่เที่ยว
+        </h1>
+        <div className="w-full flex justify-center">
+          <input
+            className="w-5/6 h-12 text-center border-b-2 text-base font-bold focus:outline-none text-[#75716B]"
+            type="text"
+            placeholder="หาที่เที่ยวแล้วไปกัน ..."
+            value={inputValue}
+            onChange={handleChange}
+          />
+        </div>
+      </nav>
+      {/* {loading ? (
         <div>
           <h1>555</h1>
         </div>
-      ) : null}
+      ) : null} */}
       <article>
         {tripTravel.map((trip, index) => (
           <div className="flex justify-between w-full h-64 mt-8" key={index}>
@@ -96,9 +121,30 @@ export function ArticleSection() {
                       onClick={() => {
                         if (trip.url.length > 0) {
                           navigator.clipboard.writeText(trip.url);
-                          alert("คัดลอก URL สำเร็จ");
+
+                          toast.success("URL copied successfully !", {
+                            position: "bottom-right",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                            transition: Bounce,
+                          });
                         } else {
-                          alert("คัดลอก URL ผิดพลาด");
+                          toast.error("Failed to copy URL !", {
+                            position: "bottom-right",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                            transition: Bounce,
+                          });
                         }
                       }}
                     >
